@@ -609,6 +609,8 @@ function dropItemSystem(x, y, isBoss) {
 
 const bow = { x: canvas.width / 2, y: canvas.height - 80, angle: -Math.PI / 2, power: 0, charging: false };
 const mouse = { x: 0, y: 0 };
+
+// Mouse controls
 canvas.addEventListener('mousemove', e => {
     mouse.x = e.clientX;
     mouse.y = e.clientY;
@@ -627,6 +629,55 @@ canvas.addEventListener('mouseup', () => {
         bow.power = 0;
     }
 });
+
+// Touch controls for mobile
+let touchId = null;
+canvas.addEventListener('touchstart', e => {
+    e.preventDefault();
+    AudioSystem.resume();
+    if (!gameActive || !canShoot) return;
+    
+    const touch = e.touches[0];
+    touchId = touch.identifier;
+    mouse.x = touch.clientX;
+    mouse.y = touch.clientY;
+    bow.angle = Math.atan2(mouse.y - bow.y, mouse.x - bow.x);
+    bow.charging = true;
+}, { passive: false });
+
+canvas.addEventListener('touchmove', e => {
+    e.preventDefault();
+    if (touchId === null) return;
+    
+    for (let touch of e.touches) {
+        if (touch.identifier === touchId) {
+            mouse.x = touch.clientX;
+            mouse.y = touch.clientY;
+            bow.angle = Math.atan2(mouse.y - bow.y, mouse.x - bow.x);
+            break;
+        }
+    }
+}, { passive: false });
+
+canvas.addEventListener('touchend', e => {
+    e.preventDefault();
+    if (touchId === null) return;
+    
+    let touchEnded = true;
+    for (let touch of e.touches) {
+        if (touch.identifier === touchId) {
+            touchEnded = false;
+            break;
+        }
+    }
+    
+    if (touchEnded && bow.charging) {
+        fireArrow();
+        bow.charging = false;
+        bow.power = 0;
+        touchId = null;
+    }
+}, { passive: false });
 
 document.addEventListener('keydown', e => {
     if (e.key === '1') selectMode('normal');
