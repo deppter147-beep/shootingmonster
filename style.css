@@ -1,0 +1,115 @@
+body { margin: 0; overflow: hidden; background-color: #1a1a1a; font-family: 'Segoe UI', sans-serif; color: white; user-select: none; }
+#gameContainer { position: relative; width: 100vw; height: 100vh; }
+canvas { background-color: #2b2b2b; cursor: crosshair; }
+
+/* UI Panel */
+.ui-panel { position: absolute; background: rgba(0, 0, 0, 0.85); border: 1px solid #555; padding: 10px; border-radius: 8px; pointer-events: none; z-index: 10; }
+
+#centerNotification {
+    position: absolute; top: 30%; left: 50%; transform: translate(-50%, -50%);
+    text-align: center; width: 100%; pointer-events: none; z-index: 50;
+}
+#levelTitle { font-size: 60px; font-weight: bold; color: #ffd700; text-shadow: 0 0 20px #ff0000; margin: 0; display: none; }
+#waveTitle { font-size: 30px; color: #fff; margin-top: 10px; display: none; }
+
+#statsPanel { top: 20px; left: 20px; width: 260px; }
+.stat-row { display: flex; justify-content: space-between; margin-bottom: 5px; font-size: 13px; color: #ccc; }
+.stat-val { color: #ffd700; font-weight: bold; }
+.special-stat { color: #00ffff; }
+
+#resourcePanel { top: 90px; right: 20px; text-align: right; border: 2px solid #00ffff; background: rgba(0, 50, 50, 0.8); }
+.soul-count { font-size: 32px; color: #00ffff; font-weight: bold; text-shadow: 0 0 10px #00ffff; }
+
+#baseHealthContainer {
+    position: absolute; top: 15px; left: 50%; transform: translateX(-50%);
+    width: 500px; height: 25px; background: #333; border: 2px solid #fff; border-radius: 15px; overflow: hidden; z-index: 20;
+}
+#baseHealthBar { width: 100%; height: 100%; background: linear-gradient(90deg, #d32f2f, #f44336); transition: width 0.2s; }
+#baseHealthText { position: absolute; width: 100%; text-align: center; top: 2px; font-size: 14px; font-weight: bold; text-shadow: 1px 1px 2px black; z-index: 21; }
+
+#skillBarContainer {
+    position: absolute; bottom: 20px; right: 20px;
+    display: flex; flex-direction: column; align-items: flex-end; gap: 5px; pointer-events: auto; z-index: 20;
+}
+#skillBar { display: flex; gap: 10px; background: rgba(0,0,0,0.8); padding: 10px; border-radius: 10px; border: 1px solid #444; }
+.skill-slot {
+    width: 60px; height: 60px; background: #222; border: 2px solid #555; border-radius: 8px;
+    display: flex; flex-direction: column; align-items: center; justify-content: center; cursor: pointer; position: relative; transition: 0.2s;
+}
+.skill-slot.active { border-color: #ffd700; background: #444; }
+.skill-key { position: absolute; top: 2px; left: 2px; font-size: 10px; background: #fff; color: #000; width: 14px; height: 14px; border-radius: 50%; text-align: center; line-height: 14px; font-weight: bold; }
+.skill-icon { font-size: 18px; }
+.skill-name { font-size: 9px; font-weight: bold; text-transform: uppercase; }
+.skill-cost { font-size: 9px; color: #00ffff; }
+
+.floating-text {
+    position: absolute; font-weight: bold; font-size: 16px; pointer-events: none;
+    animation: floatUp 1.2s ease-out forwards; text-shadow: 1px 1px 0 #000; z-index: 100;
+}
+@keyframes floatUp { 0% { transform: translateY(0) scale(1); opacity: 1; } 100% { transform: translateY(-50px) scale(1.1); opacity: 0; } }
+
+#levelInfoBox {
+    position: absolute; top: 50px; left: 50%; transform: translateX(-50%);
+    color: #ddd; font-size: 14px; background: rgba(0,0,0,0.5); padding: 5px 15px; border-radius: 20px;
+}
+
+#reloadContainer {
+    position: absolute; 
+    bottom: 120px; 
+    left: 50%; transform: translateX(-50%);
+    width: 60px; height: 6px; 
+    background: #444; border: 1px solid #fff; border-radius: 3px;
+    display: none; 
+    pointer-events: none;
+}
+#reloadBar { width: 0%; height: 100%; background: #ffd700; transition: width 0.1s linear; }
+
+/* Upgrade modal */
+#upgradePanel {
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    background: rgba(0, 0, 0, 0.85);
+    z-index: 200;
+}
+
+#upgradeCard {
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+    border: 2px solid #ffd700;
+    border-radius: 15px;
+    padding: 25px;
+    width: 400px;
+    max-height: 80vh;
+    overflow-y: auto;
+    box-shadow: 0 0 30px rgba(255, 215, 0, 0.3);
+    text-align: center;
+}
+
+#upgradeCard h3 {
+    margin: 0 0 15px 0;
+    color: #ffd700;
+    font-size: 22px;
+    text-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
+}
+
+.upgrade-list { display: flex; flex-direction: column; gap: 10px; margin-top: 15px; }
+.upgrade-btn {
+    background: linear-gradient(135deg, #2a2a3e 0%, #1f1f2e 100%);
+    border: 1px solid #555;
+    border-radius: 8px;
+    padding: 12px;
+    color: #eee;
+    cursor: pointer;
+    text-align: left;
+    transition: all 0.3s;
+}
+.upgrade-btn:hover { 
+    background: linear-gradient(135deg, #3a3a4e 0%, #2f2f3e 100%);
+    transform: translateY(-2px);
+    border-color: #ffd700;
+    box-shadow: 0 4px 8px rgba(255, 215, 0, 0.2);
+}
+.upgrade-title { font-weight: bold; color: #ffd700; margin-bottom: 4px; }
+.upgrade-desc { font-size: 12px; color: #aaa; }
